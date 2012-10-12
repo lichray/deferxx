@@ -14,13 +14,13 @@ int main(int argc, char *argv[]) {
 	FILE *fp = fopen(argv[1], "r");
 
 	/* It's invalid to fclose(NULL). */
-	if (fp == NULL) {
+	if (fp == nullptr) {
 		perror(argv[0]);
 		return 1;
 	}
 	defer([=]{ fclose(fp); });
 
-	char *line = NULL;
+	char *line = nullptr;
 	size_t linecap = 0;
 	ssize_t linelen;
 
