@@ -1,25 +1,37 @@
-/* A stupid example, prints all lines in a file. */
+/* A stupid example, copies all lines from one file to another. */
+#include <err.h>
 #define _POSIX_C_SOURCE 200809
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "defer.h"
 
-int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s FILE\n", argv[0]);
-		return 1;
+static int	 copyfile(FILE *from, FILE *to);
+
+int
+main(int argc, char *argv[])
+{
+	if (argc < 3) {
+		fprintf(stderr, "usage: %s FILE1 FILE2\n", argv[0]);
+		return 2;
 	}
 
 	FILE *fp = fopen(argv[1], "r");
-
-	/* It's invalid to fclose(NULL). */
-	if (fp == nullptr) {
-		perror(argv[0]);
-		return 1;
-	}
+	if (fp == nullptr)
+		err(1, "%s", argv[1]);
 	defer([=]{ fclose(fp); });
 
+	FILE *tfp = fopen(argv[2], "wx");
+	if (tfp == nullptr)
+		err(1, "%s", argv[2]);
+	defer([=]{ fclose(tfp); });
+
+	return copyfile(fp, tfp);
+}
+
+static int
+copyfile(FILE *from, FILE *to)
+{
 	char *line = nullptr;
 	size_t linecap = 0;
 	ssize_t linelen;
@@ -29,8 +41,9 @@ int main(int argc, char *argv[]) {
 	 * pointer, we can free it even it got realloc'ed!
 	 */
 	defer([&]{ free(line); });
-	while ((linelen = getline(&line, &linecap, fp)) > 0)
-		fwrite(line, linelen, 1, stdout);
+	while ((linelen = getline(&line, &linecap, from)) > 0)
+		if (fwrite(line, linelen, 1, to) < 1)
+			return 1;
 
 	return 0;
 }

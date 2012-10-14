@@ -1,14 +1,14 @@
-# ccconf example CXXFLAGS=-g -std=c++11
+# ccconf copyfile CXXFLAGS=-g -std=c++11
 CXXFLAGS = -g -std=c++11  
 
 .PHONY : all clean
-all : example
+all : copyfile
 clean :
-	rm -f example example.o tags
+	rm -f copyfile example.o tags
 
 tags : *.h example.cc 
 	ctags *.h example.cc 
 
-example : example.o
-	${CXX} ${LDFLAGS} -o example example.o
+copyfile : example.o
+	${CXX} ${LDFLAGS} -o copyfile example.o
 example.o: example.cc defer.h
