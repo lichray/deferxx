@@ -37,8 +37,8 @@ copyfile(FILE *from, FILE *to)
 	ssize_t linelen;
 
 	/*
-	 * It's valid to free(NULL). And, by taking a reference to the
-	 * pointer, we can free it even it got realloc'ed!
+	 * defer() uses a lambda expression to take a reference to the
+	 * pointer, so it is safe to free it even it get realloc'ed.
 	 */
 	defer(free(line));
 	while ((linelen = getline(&line, &linecap, from)) > 0)
