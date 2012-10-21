@@ -19,12 +19,12 @@ main(int argc, char *argv[])
 	FILE *fp = fopen(argv[1], "r");
 	if (fp == nullptr)
 		err(1, "%s", argv[1]);
-	defer([=]{ fclose(fp); });
+	defer(fclose(fp));
 
 	FILE *tfp = fopen(argv[2], "wx");
 	if (tfp == nullptr)
 		err(1, "%s", argv[2]);
-	defer([=]{ fclose(tfp); });
+	defer(fclose(tfp));
 
 	return copyfile(fp, tfp);
 }
@@ -40,7 +40,7 @@ copyfile(FILE *from, FILE *to)
 	 * It's valid to free(NULL). And, by taking a reference to the
 	 * pointer, we can free it even it got realloc'ed!
 	 */
-	defer([&]{ free(line); });
+	defer(free(line));
 	while ((linelen = getline(&line, &linecap, from)) > 0)
 		if (fwrite(line, linelen, 1, to) < 1)
 			return 1;

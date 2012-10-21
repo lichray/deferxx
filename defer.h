@@ -28,8 +28,8 @@
 
 #include <functional>
 
-#define defer(f) \
-	stdex::scope_guard __stdex_namelno(_DEFER_, __LINE__) (f)
+#define defer(expr) \
+	stdex::scope_guard __stdex_namelno(_DEFER_, __LINE__) ([&]{expr;})
 #define __stdex_namelno(name, lno)	__stdex_cat(name, lno)
 #define __stdex_cat(a, b)		a ## b
 
