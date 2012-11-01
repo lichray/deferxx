@@ -39,13 +39,13 @@ namespace stdex {
 
 struct scope_guard {
 	explicit scope_guard(std::function<void()> on_exit) :
-		on_exit(on_exit), enabled_(true) {}
+		on_exit_(on_exit), enabled_(true) {}
 	scope_guard(scope_guard const&) = delete;
 	scope_guard& operator=(scope_guard const&) = delete;
 	
 	~scope_guard() noexcept {
 		if (enabled_)
-			on_exit();
+			on_exit_();
 	}
 	
 	void dismiss() {
@@ -53,7 +53,7 @@ struct scope_guard {
 	}
 
 private:
-	std::function<void()> on_exit;
+	std::function<void()> on_exit_;
 	bool enabled_;
 };
 
