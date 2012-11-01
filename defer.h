@@ -52,6 +52,10 @@ struct scope_guard {
 		enabled_ = false;
 	}
 
+	bool operator=(bool enabled) {
+		return enabled_ = enabled;
+	}
+
 private:
 	std::function<void()> on_exit_;
 	bool enabled_;
