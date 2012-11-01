@@ -44,7 +44,7 @@ struct scope_guard {
 	scope_guard& operator=(scope_guard const&) = delete;
 	
 	~scope_guard() noexcept {
-		if(!dismissed)
+		if (not dismissed)
 			on_exit();
 	}
 	
