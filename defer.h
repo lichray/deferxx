@@ -26,10 +26,11 @@
 #ifndef _DEFER_H
 #define _DEFER_H 1
 
-#include <functional>
+#include <utility>
 
 #define defer(...) \
-	stdex::scope_guard __stdex_namelno(_DEFER_, __LINE__){[&]{__VA_ARGS__;}}
+	auto __stdex_namelno(_DEFER_, __LINE__) = \
+	stdex::make_guard([&]{ __VA_ARGS__; });
 #define namely(name) \
 	; auto& name = __stdex_namelno(_DEFER_, __LINE__)
 #define __stdex_namelno(name, lno)	__stdex_cat(name, lno)
@@ -37,12 +38,18 @@
 
 namespace stdex {
 
+template <typename Func>
 struct scope_guard {
-	explicit scope_guard(std::function<void()> on_exit) :
-		on_exit_(on_exit), enabled_(true) {}
+	explicit scope_guard(Func&& on_exit) :
+		on_exit_(std::move(on_exit)), enabled_(true) {}
 	scope_guard(scope_guard const&) = delete;
 	scope_guard& operator=(scope_guard const&) = delete;
-	
+
+	scope_guard(scope_guard&& o) :
+		on_exit_(std::move(o.on_exit_)), enabled_(o.enabled_) {
+		o.enabled_ = false;
+	}
+
 	~scope_guard() noexcept {
 		if (enabled_)
 			on_exit_();
@@ -57,9 +64,14 @@ struct scope_guard {
 	}
 
 private:
-	std::function<void()> on_exit_;
+	Func on_exit_;
 	bool enabled_;
 };
+
+template <typename Func>
+auto make_guard(Func&& f) -> scope_guard<Func> {
+	return scope_guard<Func>(std::forward<Func>(f));
+}
 
 }
 
