@@ -6,12 +6,13 @@
 
 #include "defer.h"
 
-static int	 copyfile(FILE *from, FILE *to);
+static int copyfile(FILE *from, FILE *to);
 
 int
 main(int argc, char *argv[])
 {
-	if (argc < 3) {
+	if (argc < 3)
+	{
 		fprintf(stderr, "usage: %s FILE1 FILE2\n", argv[0]);
 		return 2;
 	}
@@ -29,8 +30,7 @@ main(int argc, char *argv[])
 	return copyfile(fp, tfp);
 }
 
-static int
-copyfile(FILE *from, FILE *to)
+int copyfile(FILE *from, FILE *to)
 {
 	char *line = nullptr;
 	size_t linecap = 0;
