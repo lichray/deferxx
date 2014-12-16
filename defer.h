@@ -68,11 +68,6 @@ struct scope_guard
 		enabled_ = false;
 	}
 
-	bool operator=(bool enabled)
-	{
-		return enabled_ = enabled;
-	}
-
 private:
 	Func on_exit_;
 	bool enabled_;

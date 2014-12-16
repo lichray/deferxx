@@ -17,7 +17,6 @@ Example
   vec_.push_back(x);
   /* something may fail */
   undoer.dismiss();               // strong guarantee
-  /* undo1 = undo2 = false;       // chainable dismissal */
 
 See also
 ==========
